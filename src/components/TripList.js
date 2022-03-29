@@ -1,31 +1,20 @@
-import { useState, useEffect,useCallback } from "react"
+import { useState } from "react"
+import {useFetch} from '../hooks/useFetch'
 
 //styles
 import './tripList.css'
 
 export default function TripList() {
- const [trips,setTrips]= useState([])
  const [url, setUrl] =useState("http://localhost:3000/trips")
-
- const fetchTrips = useCallback(async () => {
-     const response = await fetch(url)
-     const json = await response.json()
-     setTrips(json)
- }, [url])
- 
- useEffect(() => {
-     fetchTrips()
- }, [fetchTrips])
-    
-  console.log(trips)
-
-
+ const {data: trips, isPending, error} = useFetch(url, {type: "GET"})
 
   return (
     <div className="trip-list">
         <h2>PACKAGE DEALS</h2>
+        {isPending && <div> Loading trips...</div>}
+        {error && <div>{error}</div>}
         <ul>
-            {trips.map(trip =>(
+            {trips && trips.map(trip =>(
                 <li key ={trip.id}>
                     <h3>{trip.title}</h3>
                     <p>{trip.price}</p>
